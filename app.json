@@ -2,6 +2,14 @@
   "expo": {
     "name": "nguyenminhtri-app",
     "slug": "nguyenminhtri-app",
+    "scheme": "nguyenminhtri-app",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,8 +25,9 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "plugins": [
+      "expo-router",
+      "expo-video"
+    ]
   }
 }
