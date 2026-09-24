@@ -1,5 +1,6 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import MovieCard from "./MovieCard";
+import { router } from "expo-router";
 
 export default function MovieSection({ title, movies }) {
   return (
@@ -7,7 +8,9 @@ export default function MovieSection({ title, movies }) {
       <View className="flex-row items-center justify-between">
         <Text className="text-white text-xl font-bold">{title}</Text>
 
-        <Text className="text-[#E50914] text-sm">Xem tất cả</Text>
+        <Pressable onPress={() => router.push("/movie/popular")}>
+          <Text className="text-[#E50914] text-sm">Xem tất cả</Text>
+        </Pressable>
       </View>
 
       <ScrollView
@@ -15,7 +18,7 @@ export default function MovieSection({ title, movies }) {
         showsHorizontalScrollIndicator={false}
         className="mt-4"
       >
-        {movies.map((movie) => (
+        {movies.slice(0, 5).map((movie) => (
           <View key={movie.id} className="mr-3">
             <MovieCard movie={movie} />
           </View>

@@ -5,11 +5,17 @@ import { router } from "expo-router";
 export default function HeroMovie({ movie }) {
   return (
     <View className="h-[420px] rounded-2xl overflow-hidden">
-      <Image
-        source={{ uri: movie.backdrop }}
-        className="absolute w-full h-full"
-        resizeMode="cover"
-      />
+      {movie.backdrop || movie.poster ? (
+        <Image
+          source={{
+            uri: movie.backdrop || movie.poster,
+          }}
+          className="absolute w-full h-full"
+          resizeMode="cover"
+        />
+      ) : (
+        <View className="absolute w-full h-full bg-[#171922]" />
+      )}
 
       <LinearGradient
         colors={["transparent", "#0F1017"]}

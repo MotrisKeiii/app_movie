@@ -1,18 +1,22 @@
 import { View } from "react-native";
-import { VideoView, useVideoPlayer } from "expo-video";
 
 export default function MovieTrailer({ videoUrl }) {
-  const player = useVideoPlayer(videoUrl, (player) => {
-    player.loop = false;
-  });
+  if (!videoUrl) {
+    return null;
+  }
+
+  const videoId = videoUrl.split("v=")[1];
 
   return (
     <View className="mt-6 rounded-2xl overflow-hidden">
-      <VideoView
-        player={player}
-        className="w-full h-[220px]"
-        contentFit="cover"
-        nativeControls
+      <iframe
+        src={`https://www.youtube.com/embed/${videoId}`}
+        style={{
+          width: "100%",
+          height: 220,
+          border: "none",
+        }}
+        allowFullScreen
       />
     </View>
   );

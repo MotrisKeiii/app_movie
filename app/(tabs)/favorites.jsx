@@ -1,9 +1,10 @@
 import { View, Text, FlatList } from "react-native";
 import { useCallback, useState } from "react";
-import { useFocusEffect, router } from "expo-router";
+import { useFocusEffect } from "expo-router";
 
-import { getFavorites } from "../../services/favoriteService";
-import MovieCard from "../../components/movie/MovieCard";
+import { getFavorites, removeFavorite } from "../../services/favoriteService";
+
+import FavoriteCard from "../../components/movie/FavoriteCard";
 
 export default function FavoritesScreen() {
   const [favorites, setFavorites] = useState([]);
@@ -17,6 +18,11 @@ export default function FavoritesScreen() {
   async function loadFavorites() {
     const data = await getFavorites();
     setFavorites(data);
+  }
+
+  async function handleRemoveFavorite(movieId) {
+    await removeFavorite(movieId);
+    await loadFavorites();
   }
 
   return (
@@ -34,7 +40,9 @@ export default function FavoritesScreen() {
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ paddingTop: 20 }}
           columnWrapperStyle={{ gap: 12 }}
-          renderItem={({ item }) => <MovieCard movie={item} />}
+          renderItem={({ item }) => (
+            <FavoriteCard movie={item} onRemove={handleRemoveFavorite} />
+          )}
         />
       )}
     </View>

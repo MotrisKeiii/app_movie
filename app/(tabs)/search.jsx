@@ -1,15 +1,58 @@
-import { View, Text, TextInput, FlatList } from "react-native";
-import { useState } from "react";
-
-import { movies } from "../../data/movies";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import MovieCard from "../../components/movie/MovieCard";
+import { searchMovies } from "../../services/movieApi";
+import { useState, useEffect } from "react";
 
 export default function SearchScreen() {
   const [searchText, setSearchText] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
 
-  const searchResults = movies.filter((movie) =>
-    movie.title.toLowerCase().includes(searchText.toLowerCase()),
-  );
+  const handleSearch = (text) => {
+    setSearchText(text);
+
+    if (text.trim()) {
+      setSearchLoading(true);
+    } else {
+      setSearchLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!searchText.trim()) {
+      setSearchResults([]);
+      setSearchLoading(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        setSearchError(null);
+
+        const results = await searchMovies(searchText);
+
+        console.log("SEARCH RESULTS:", results);
+
+        setSearchResults(results);
+      } catch (error) {
+        console.log("SEARCH ERROR:", error);
+
+        setSearchError("Không thể tìm kiếm phim.");
+        setSearchResults([]);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchText]);
 
   return (
     <View className="flex-1 bg-[#0F1017]">
@@ -32,17 +75,29 @@ export default function SearchScreen() {
 
             <TextInput
               value={searchText}
-              onChangeText={setSearchText}
+              onChangeText={handleSearch}
               placeholder="Tìm kiếm phim..."
               placeholderTextColor="#6B7280"
               className="bg-[#171922] text-white rounded-xl px-4 py-3 mt-5"
             />
-
-            {searchText.trim() !== "" && searchResults.length === 0 && (
-              <Text className="text-[#A5A7B4] text-center mt-10">
-                Không tìm thấy phim
+            {searchLoading && (
+              <View className="items-center mt-6">
+                <ActivityIndicator size="small" color="#E50914" />
+                <Text className="text-[#A5A7B4] mt-2">Đang tìm kiếm...</Text>
+              </View>
+            )}
+            {searchError && (
+              <Text className="text-[#FF453A] text-center mt-6">
+                {searchError}
               </Text>
             )}
+            {searchText.trim() !== "" &&
+              !searchLoading &&
+              searchResults.length === 0 && (
+                <Text className="text-[#A5A7B4] text-center mt-10">
+                  Không tìm thấy phim
+                </Text>
+              )}
           </View>
         }
         renderItem={({ item }) => <MovieCard movie={item} />}
